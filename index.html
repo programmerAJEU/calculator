@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="StyleForCalculator.css">
+</head>
+<body>
+    <figure>
+        <header>
+            <div id="record" style="font-size: 20px; text-align: end;">
+            </div>
+            <div id="result" style="text-align: end;">
+            </div>
+        </header>
+        <main>
+            <div>7</div>
+            <div>8</div>
+            <div>9</div>
+            <div class="aritmetic">+</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div class="aritmetic">-</div>
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div class="aritmetic">×</div>
+            <div class="clear">C</div>
+            <div>0</div>
+            <div class="equal">=</div>
+            <div class="aritmetic">÷</div>
+        </main>
+        <footer id="foot">
+            Clear
+        </footer>
+    </figure>
+    <figcaption>
+        <span id="sms"></span>
+    </figcaption>
+    <script>
+        let item = document.getElementById('sms');
+        let time = new Date();
+        item.innerHTML = `01/19/2024 7:35 PM - AJEU GOMEZ TOC © Copyright ${time.getFullYear()}`;
+        let btn = document.getElementsByTagName('div');
+        function fistSymbol(symbolArit){
+            let flag = true;
+            let symbolMath = ['+','-','×','÷'];
+            symbolMath.forEach(element => {
+                if(element==symbolArit){
+                    flag = false;
+                }
+            });
+           return flag;
+        }
+        function aritmetic(p1){
+            let symbol = ['C', '='];
+            let flag = true;
+            symbol.forEach(x => {
+                if(x==p1){
+                    flag = false;
+                }
+            })
+            return flag;
+        }
+        function lastSymbol(){
+            let symbolOA = ['+','-','×','÷'];
+            let character;
+            let noFound = true;
+            let screen1 = document.getElementById('record');
+            let txtScreen1 = screen1.innerText;
+            for(let i=txtScreen1.length - 1; i>=0; i--){
+                for(let j=0; j <symbolOA.length && noFound; j++){
+                if(txtScreen1[i]==symbolOA[j]){
+                            character = symbolOA[j];
+                            noFound = false;
+                            break;
+                        }
+                    }
+            }
+            return character;
+        }
+        let noCalculated = true;
+        let totalOperation = 0;
+        let equalClick = false;
+        function ChangeSymbol(newSymbol, currentTxt){
+            let newTxt ='';
+            for(let i=0; i<currentTxt.length - 1; i++){
+                newTxt += currentTxt[i];
+            }
+            newTxt += newSymbol;
+            return newTxt;
+        }
+        function Equal(){
+            let screen = document.getElementById('record');
+            let screen2 = document.getElementById('result');
+            if(noCalculated){
+                switch(lastSymbol()){
+                    case '+':{
+                        let res = totalOperation + parseFloat(screen2.innerText);
+                        screen2.innerText = res.toString();
+                        break;
+                    }
+                    case '-':{
+                        let res = totalOperation - parseFloat(screen2.innerText);
+                        screen2.innerText = res.toString();
+                        break;
+                    }
+                    case '×':{
+                        let res = totalOperation * parseFloat(screen2.innerText);
+                        screen2.innerText = res.toString();
+                        break;
+                    }
+                    case '÷':{
+                        let res = totalOperation / parseFloat(screen2.innerText);
+                        screen2.innerText = res.toString();
+                        break;
+                    }
+            }
+            totalOperation = parseFloat(screen2.innerText);
+            }
+            screen.innerText = '';
+            noCalculated = false;
+        }
+        
+        function calculate(){
+            this.classList.add('clicked');
+            let screen = document.getElementById('record');
+            let screen2 = document.getElementById('result');
+            if(aritmetic(this.innerHTML)){
+                if(fistSymbol(this.innerHTML)){
+                    if(noCalculated){
+                        screen2.innerText += this.innerText;
+                    }
+                    else{
+                        totalOperation = parseFloat(screen2.innerText);
+                        screen2.innerText = this.innerText; 
+                    }
+                    noCalculated = true;
+                }else{
+                    if(noCalculated){
+                    switch(lastSymbol()){
+                    case '+':{
+                        screen.innerText += `${screen2.innerText}${this.innerText}`;
+                        let res = totalOperation + parseFloat(screen2.innerText);
+                        screen2.innerText = res.toString();
+                        noCalculated = false;
+                        break;
+                    }
+                    case '-':{
+                        screen.innerText += `${screen2.innerText}${this.innerText}`;
+                        let res = totalOperation - parseFloat(screen2.innerText);
+                        screen2.innerText = res.toString();
+                        noCalculated = false;
+                        
+                        break;
+                    }
+                    case '×':{
+                        screen.innerText += `${screen2.innerText}${this.innerText}`;
+                        let res = totalOperation * parseFloat(screen2.innerText);
+                        screen2.innerText = res.toString();
+                        noCalculated = false;
+                        break;
+                    }
+                    case '÷':{
+                        screen.innerText += `${screen2.innerText}${this.innerText}`;
+                        let res = totalOperation / parseFloat(screen2.innerText);
+                        screen2.innerText = res.toString();
+                        noCalculated = false;
+                        break;
+                    }
+                    default:{
+                        if(screen.innerText.length > 0 || screen2.innerText.length > 0){
+                            screen.innerText += `${screen2.innerText}${this.innerText}`;
+                            noCalculated = false;
+                        }
+                        break;
+                    }
+                    }
+                    }else if(screen.innerText.length > 0){
+                        screen.innerText = ChangeSymbol(this.innerHTML, screen.innerText);
+                    }else{
+                        screen.innerText += `${screen2.innerText}${this.innerText}`;
+                    }
+                }              
+            }else if(!aritmetic(this.innerHTML)){
+                switch(this.innerText){
+                    case 'C':
+                    {
+                        let string = screen2.innerHTML;
+                        let aux = '';
+                        for(let i=0; i<string.length - 1; i++){
+                            aux += string[i];
+                        }
+                        screen2.innerHTML = aux;
+                        break;
+                    }
+                    case '=':
+                    {   if(screen2.innerText.length > 0)
+                        Equal();
+                        break;
+                    }
+                }
+            }
+            setTimeout(x => this.classList.remove('clicked'), 300);
+        }
+        for(let i=0; i< btn.length; i++){
+            btn[i].addEventListener('click', calculate);
+        }
+        function Reset(){
+            this.classList.add('clicked');
+            let screen = document.getElementById('record');
+            let screen2 = document.getElementById('result');
+            screen.innerText = '';
+            screen2.innerText = '';
+            noCalculated = true;
+            setTimeout(() => {
+                this.classList.remove('clicked');
+            }, 300);
+        }
+        const f = document.getElementById('foot');
+        f.addEventListener('click',Reset);
+    </script>
+</body>
+</html>
